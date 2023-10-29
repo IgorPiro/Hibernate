@@ -1,36 +1,26 @@
 package jm.task.core.jdbc;
 
+import jm.task.core.jdbc.dao.UserDao;
+import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
 import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.service.UserService;
-import jm.task.core.jdbc.service.UserServiceImpl;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import jm.task.core.jdbc.util.Util;
 
 public class Main {
+    public static void main(String[] args) {
+        Util.getSessionFactory();
+        UserDao userDao = new UserDaoHibernateImpl();
+        userDao.createUsersTable();
 
-    public static void main(String[] args) throws SQLException {
 
-        UserService userService = new UserServiceImpl();
+        userDao.saveUser("Иэн", "Кёртис", (byte) 23);
+        userDao.saveUser("Алексей", "Перминов", (byte) 24);
+        userDao.saveUser("Густав", "Ар", (byte) 21);
+        userDao.saveUser("Джеймс", "МакКормик", (byte) 20);
 
-        userService.createUsersTable();
-
-        List<User> users = new ArrayList<>();
-        users.add(new User("Иэн", "Кёртис", (byte) 23));
-        users.add(new User("Алексей", "Перминов", (byte) 24));
-        users.add(new User("Густав", "Ар", (byte) 21));
-        users.add(new User("Джеймс", "МакКормик", (byte) 20));
-        for (User us : users) {
-            userService.saveUser(us.getName(), us.getLastName(), (byte) us.getAge());
-            System.out.println("User с именем – " + us.getName() + " добавлен в базу данных");
-        }
-        List<User> usersTable = userService.getAllUsers();
-        for (User us : usersTable) {
-            System.out.println(us);
-        }
-        userService.cleanUsersTable();
-        userService.dropUsersTable();
+        userDao.removeUserById(3L);
+        userDao.getAllUsers();
+        userDao.cleanUsersTable();
+        userDao.dropUsersTable();
 
     }
 }
